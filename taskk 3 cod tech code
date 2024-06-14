@@ -1,0 +1,65 @@
+
+#include <string.h>
+#include <ctype.h>
+
+// Sample positive and negative words
+const char *positive_words[] = {"love", "like", "enjoy", "happy", "great", "fantastic", "good", "interesting", "rewarding"};
+const char *negative_words[] = {"hate", "dislike", "sad", "bad", "terrible", "boring", "poor", "awful"};
+
+// Function to convert a string to lowercase
+void to_lowercase(char *str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower(str[i]);
+    }
+}
+
+// Function to check if a word is in the list of words
+int is_word_in_list(const char *word, const char **list, int list_size) {
+    for (int i = 0; i < list_size; i++) {
+        if (strcmp(word, list[i]) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+// Function to perform simple sentiment analysis
+void sentiment_analysis(const char *text) {
+    char word[50];
+    int pos_count = 0, neg_count = 0;
+    
+    // Copy the input text to a mutable string
+    char mutable_text[strlen(text) + 1];
+    strcpy(mutable_text, text);
+    to_lowercase(mutable_text);
+
+    // Tokenize the text
+    char *token = strtok(mutable_text, " .,!?");
+    while (token != NULL) {
+        // Check if the token is a positive or negative word
+        if (is_word_in_list(token, positive_words, sizeof(positive_words) / sizeof(positive_words[0]))) {
+            pos_count++;
+        } else if (is_word_in_list(token, negative_words, sizeof(negative_words) / sizeof(negative_words[0]))) {
+            neg_count++;
+        }
+        token = strtok(NULL, " .,!?");
+    }
+
+    // Print sentiment analysis result
+    printf("Sentiment Analysis of the text: %s\n", text);
+    printf("Positive words: %d\n", pos_count);
+    printf("Negative words: %d\n", neg_count);
+    if (pos_count > neg_count) {
+        printf("Overall Sentiment: Positive\n");
+    } else if (neg_count > pos_count) {
+        printf("Overall Sentiment: Negative\n");
+    } else {
+        printf("Overall Sentiment: Neutral\n");
+    }
+}
+
+int main() {
+    const char *text = "I love natural language processing. It's so interesting and rewarding!";
+    sentiment_analysis(text);
+    return 0;
+}
